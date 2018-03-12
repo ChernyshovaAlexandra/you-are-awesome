@@ -41,7 +41,7 @@ const createIncrementer = function* () {
 const returnBackInSecond = () => {};
 const getDeepPropertiesCount = () => {};
 const createSerializedObject = () => {
-let obj = new Object;
+let obj = new Object();
 return obj;
 };
 const toBuffer = () => {};
