@@ -40,7 +40,10 @@ const createIncrementer = function* () {
 // return same argument not earlier than in one second, and not later, than in two
 const returnBackInSecond = () => {};
 const getDeepPropertiesCount = () => {};
-const createSerializedObject = () => {};
+const createSerializedObject = () => {
+let obj = new Object;
+return obj;
+};
 const toBuffer = () => {};
 const sortByProto = (mass) => {
     return mass.sort((a,b)=>( a.__proto__ - b.__proto__));
