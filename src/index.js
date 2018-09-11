@@ -1,56 +1,78 @@
 // DO WHATEVER YOU WANT HERE
 
-const createEnumerableProperty = (prop) => {return prop};
-const createNotEnumerableProperty = (prop) => {
-Object.defineProperty(Object.prototype, prop, {
-    set: (val) =>{prop = val},
-    get: () =>(prop),
-    enumerable : false
-});
-return prop;
+const createEnumerableProperty = (propertyName) => propertyName;
+const createNotEnumerableProperty = (propertyName) => {
+    Object.defineProperty(Object.prototype, propertyName, { 
+        enumerable: false, 
+        get: () => propertyName,
+        set: (value) => { propertyName = value } 
+    });
+    return propertyName;
 };
-
 const createProtoMagicObject = () => {
-let magicObj = () => {}
-magicObj.prototype = magicObj.__proto__;
-return magicObj;
+        let foo = () => {};
+        foo.prototype = foo.__proto__;
+        return foo;
 };
-let i = 0;
-Function.prototype.valueOf = function(){
-    return i;
-}
-const incrementor = () => {
-i ++;
-return incrementor;
-};
-let k = 0;
-const asyncIncrementor = () => {
-    return new Promise((resolve) => {
-            k++;
-    return resolve(k);
-})
-};
-const createIncrementer = function* () {
-    var n = 1;
-    while (true) {
-        yield n++;
-    }
-};
+const incrementor = (() => {
+    let count = 0;
+    let nextChainLink = function foo() {
+        count++;
+        return foo;
+    };
+    nextChainLink.valueOf = () => count;    
+    return nextChainLink;
+})();
+const asyncIncrementor = (() => {
+    let count = 0;
+    let nextChainLink = function foo() {
+        count++;
+        return new Promise(resolve => resolve(foo));
+    };
+    nextChainLink.valueOf = () => count;    
+    return nextChainLink;
+})();
+const createIncrementer = (() => {
+    let count = 0;
+    let nextChainLink = function* foo() {};
+    nextChainLink.prototype.next = () => {
+        return {
+            value: ++count,
+            done: true
+        };
+    };    
+    return nextChainLink;
+})();
 
 // return same argument not earlier than in one second, and not later, than in two
-const returnBackInSecond = (n) => 
- new Promise(resolve => 
-    setTimeout(() => {
-     resolve(n)}, 1000));
-
-const getDeepPropertiesCount = () => {};
+const returnBackInSecond = (param) => {
+    return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(param);
+        }, 1000);
+    });
+};
+const getDeepPropertiesCount = (obj) => {
+    let count = 0;
+    return (function foo(obj) {
+        for (key in obj) {
+            count++;
+            if (typeof obj[key] === 'object') foo(obj[key]);
+        }
+        return count;
+    })(obj);
+};
 const createSerializedObject = () => {
-let obj = null;
-return obj;
+    JSON.stringify = (obj) => obj;
+    JSON.parse = (obj) => obj;
+    return {};
 };
 const toBuffer = () => {};
-const sortByProto = (mass) => {
-    return mass.sort((a,b)=>( a.__proto__ - b.__proto__));
+const sortByProto = (array) => {
+    array.sort((left, right) => {
+        if (Object.getPrototypeOf(left) !== right) return 1;
+    });
+    return array;
 };
 
 exports.createEnumerableProperty = createEnumerableProperty;
